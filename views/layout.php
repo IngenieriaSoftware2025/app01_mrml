@@ -242,7 +242,7 @@
         </button>
 
         <a class="navbar-brand fw-bold text-rose" href="/app01_mrml">
-          <img src="<?= asset('./images/cit.png') ?>" width="35px" alt="cit">
+          <img src="<?= asset('./images/ico_mujer.png') ?>" width="35px" alt="cit">
           Mujeres
         </a>
 
@@ -256,12 +256,12 @@
 
             <div class="nav-item dropdown">
               <a class="nav-link dropdown-toggle text-white" href="#" data-bs-toggle="dropdown">
-                <i class="bi bi-stars me-2"></i>Productos
+                <i class="bi bi-bag-heart-fill"></i>Productos
               </a>
               <ul class="dropdown-menu dropdown-menu-dark" id="dropwdownRevision" style="margin: 0;">
                 <li>
                   <a class="dropdown-item nav-link text-white" href="/app01_mrml/productosMaria">
-                    <i class="bi bi-flower1 me-2"></i>Subitem
+                    <i class="bi bi-plus-circle-dotted"></i>Registrar 
                   </a>
                 </li>
               </ul>

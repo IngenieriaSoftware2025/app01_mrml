@@ -29,7 +29,7 @@
                                 <label for="nombre" class="form-label">Nombre del Producto</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-tag"></i></span>
-                                    <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ej: Papel higiénico" required>
+                                    <input type="text" class="form-control" id="nombre" name="nombreProducto" placeholder="Ej: Papel higiénico" required>
                                 </div>
                             </div>
 
@@ -37,7 +37,7 @@
                                 <label for="cantidad" class="form-label">Cantidad</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-123"></i></span>
-                                    <input type="number" class="form-control" id="cantidad" name="cantidad" min="1" value="1" required>
+                                    <input type="number" class="form-control" id="cantidadProducto" name="cantidad" min="1" value="1" required>
                                 </div>
                             </div>
 
@@ -45,7 +45,7 @@
                                 <label for="categoria" class="form-label">Categoría</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-bookmarks"></i></span>
-                                    <select class="form-select" id="categoria" name="categoria" required>
+                                    <select class="form-select" id="categoria" name="categoriaProducto" required>
                                         <option value="">Seleccionar...</option>
                                         <option value="Alimentos">Alimentos</option>
                                         <option value="Higiene">Higiene</option>
@@ -58,8 +58,8 @@
                                 <label for="prioridad" class="form-label">Prioridad</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-star"></i></span>
-                                    <select class="form-select" id="prioridad" name="prioridad" required>
-                                        <option value="">Seleccionar...</option>
+                                    <select class="form-select" id="prioridad" name="prioridadProducto" required>
+                                        <option value="" disabled >Seleccionar...</option>
                                         <option value="Alta">Alta</option>
                                         <option value="Media">Media</option>
                                         <option value="Baja">Baja</option>
@@ -71,7 +71,7 @@
                                 <label for="notas" class="form-label">Notas Adicionales (opcional)</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-pencil"></i></span>
-                                    <textarea class="form-control" id="notas" name="notas" rows="2" placeholder="Alguna especificación o detalle importante"></textarea>
+                                    <textarea class="form-control" id="notas" name="notasProducto" rows="2" placeholder="Alguna especificación o detalle importante"></textarea>
                                 </div>
                             </div>
                         </div>
