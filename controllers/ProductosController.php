@@ -4,12 +4,16 @@ namespace Controllers;
 
 use MVC\Router;
 //use Model\Clientes;
+//Aqui se usa el modelo de active Record
 use Model\ActiveRecord;
 
-class ProductosControlador extends ActiveRecord
+
+//Este extiende el ActiveRecord
+class ProductosController extends ActiveRecord
 {
     public static function renderizarPagina(Router $router)
     {
+        //aqui se pone la ruta donde esta
         $router->render('productos/index', []);
     }
     

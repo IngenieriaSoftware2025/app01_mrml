@@ -1,21 +1,21 @@
 <?php 
 require_once __DIR__ . '/../includes/app.php';
 
-//--aqui se agreega cada vez que hacemos una pagina
+//--aqui se agrega los controladores
 
 use MVC\Router;
 use Controllers\AppController;
-use Controllers\ProductosControlador;
-
+use Controllers\ProductosController;
+use Controllers\CategoriaController;
 
 //-----a
 $router = new Router();
 $router->setBaseURL('/' . $_ENV['APP_NAME']);
 
 //Aqui agrego las rutas
-
 $router->get('/', [AppController::class,'index']);
-$router->get('/productos_de_maria', [ProductosControlador::class,'renderizarPagina']);
+$router->get('/productosMaria', [ProductosController::class,'renderizarPagina']);
+$router->get('/CategoriaMaria', [CategoriaController::class,'renderizarPagina']);
 
 
 //-------------------------------------------------------
