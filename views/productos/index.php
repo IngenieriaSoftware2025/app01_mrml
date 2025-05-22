@@ -44,15 +44,20 @@
                                 </div>
                             </div>
 
+                            
                             <div class="col-md-6">
                                 <label for="id_categoria" class="form-label">Categoría</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-bookmarks"></i></span>
                                     <select class="form-select" id="id_categoria" name="id_categoria" required>
                                         <option value="">Seleccionar...</option>
-                                        <?php foreach($categorias as $cat): ?>
-                                            <option value="<?= $cat->cat_id ?>"><?= $cat->cat_nombre ?></option>
-                                        <?php endforeach; ?>
+                                        <?php if (isset($categorias) && !empty($categorias)): ?>
+                                            <?php foreach($categorias as $cat): ?>
+                                                <option value="<?= $cat->id_categoria ?>"><?= $cat->nombre ?></option>
+                                            <?php endforeach; ?>
+                                        <?php else: ?>
+                                            <option value="" disabled>No hay categorías disponibles</option>
+                                        <?php endif; ?>
                                     </select>
                                 </div>
                             </div>
@@ -63,9 +68,13 @@
                                     <span class="input-group-text"><i class="bi bi-star"></i></span>
                                     <select class="form-select" id="id_prioridad" name="id_prioridad" required>
                                         <option value="">Seleccionar...</option>
-                                        <?php foreach($prioridades as $p): ?>
-                                            <option value="<?= $p->pri_id ?>"><?= $p->pri_nombre ?></option>
-                                        <?php endforeach; ?>
+                                        <?php if (isset($prioridades) && !empty($prioridades)): ?>
+                                            <?php foreach($prioridades as $p): ?>
+                                                <option value="<?= $p->id_prioridad ?>"><?= $p->nivel ?></option>
+                                            <?php endforeach; ?>
+                                        <?php else: ?>
+                                            <option value="" disabled>No hay prioridades disponibles</option>
+                                        <?php endif; ?>
                                     </select>
                                 </div>
                             </div>

@@ -1,20 +1,20 @@
 <?php
-
+// Archivo: Model/Prioridades.php
 namespace Model;
 
 class Prioridades extends ActiveRecord {
-
     public static $tabla = 'prioridades';
     public static $columnasDB = [
-        'pri_nombre'
+        'id_prioridad',  // ✅ Nombre real de la BD
+        'nivel'          // ✅ Nombre real de la BD
     ];
 
-    public static $idTabla = 'pri_id';
-    public $pri_id;
-    public $pri_nombre;
+    public static $idTabla = 'id_prioridad';  // ✅ Nombre real de la BD
+    public $id_prioridad;  // ✅ Propiedad con nombre real
+    public $nivel;         // ✅ Propiedad con nombre real
 
     public function __construct($args = []) {
-        $this->pri_id = $args['pri_id'] ?? null;
-        $this->pri_nombre = $args['pri_nombre'] ?? '';
+        $this->id_prioridad = $args['id_prioridad'] ?? null;
+        $this->nivel = $args['nivel'] ?? '';
     }
 }
