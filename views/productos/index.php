@@ -29,7 +29,7 @@
                                 <label for="nombre" class="form-label">Nombre del Producto</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-tag"></i></span>
-                                    <input type="text" class="form-control" id="nombre" name="nombreProducto" placeholder="Ej: Papel higiénico" required>
+                                    <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ej: Papel higiénico" required>
                                 </div>
                             </div>
 
@@ -37,41 +37,41 @@
                                 <label for="cantidad" class="form-label">Cantidad</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-123"></i></span>
-                                    <input type="number" class="form-control" id="cantidadProducto" name="cantidad" min="1" value="1" required>
+                                    <input type="number" class="form-control" id="cantidad" name="cantidad" min="1" value="1" required>
                                 </div>
                             </div>
 
                             <div class="col-md-6">
-                                <label for="categoria" class="form-label">Categoría</label>
+                                <label for="id_categoria" class="form-label">Categoría</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-bookmarks"></i></span>
-                                    <select class="form-select" id="categoria" name="categoriaProducto" required>
+                                    <select class="form-select" id="id_categoria" name="id_categoria" required>
                                         <option value="">Seleccionar...</option>
-                                        <option value="Alimentos">Alimentos</option>
-                                        <option value="Higiene">Higiene</option>
-                                        <option value="Hogar">Hogar</option>
+                                        <?php foreach($categorias as $cat): ?>
+                                            <option value="<?= $cat->id_categoria ?>"><?= $cat->nombre ?></option>
+                                        <?php endforeach; ?>
                                     </select>
                                 </div>
                             </div>
 
                             <div class="col-md-6">
-                                <label for="prioridad" class="form-label">Prioridad</label>
+                                <label for="id_prioridad" class="form-label">Prioridad</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-star"></i></span>
-                                    <select class="form-select" id="prioridad" name="prioridadProducto" required>
-                                        <option value="" disabled >Seleccionar...</option>
-                                        <option value="Alta">Alta</option>
-                                        <option value="Media">Media</option>
-                                        <option value="Baja">Baja</option>
+                                    <select class="form-select" id="id_prioridad" name="id_prioridad" required>
+                                        <option value="">Seleccionar...</option>
+                                        <?php foreach($prioridades as $p): ?>
+                                            <option value="<?= $p->id_prioridad ?>"><?= $p->nivel ?></option>
+                                        <?php endforeach; ?>
                                     </select>
                                 </div>
                             </div>
 
                             <div class="col-12">
-                                <label for="notas" class="form-label">Notas Adicionales (opcional)</label>
+                                <label for="notas_adicionales" class="form-label">Notas Adicionales (opcional)</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-pencil"></i></span>
-                                    <textarea class="form-control" id="notas" name="notasProducto" rows="2" placeholder="Alguna especificación o detalle importante"></textarea>
+                                    <textarea class="form-control" id="notas_adicionales" name="notas_adicionales" rows="2" placeholder="Alguna especificación o detalle importante"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -90,3 +90,6 @@
         </div>
     </main>
 </div>
+
+
+<script src="<?= asset('build/js/productos/index.js') ?>"></script>
