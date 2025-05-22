@@ -51,7 +51,7 @@
                                     <select class="form-select" id="id_categoria" name="id_categoria" required>
                                         <option value="">Seleccionar...</option>
                                         <?php foreach($categorias as $cat): ?>
-                                            <option value="<?= $cat->id_categoria ?>"><?= $cat->nombre ?></option>
+                                            <option value="<?= $cat->cat_id ?>"><?= $cat->cat_nombre ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
@@ -64,7 +64,7 @@
                                     <select class="form-select" id="id_prioridad" name="id_prioridad" required>
                                         <option value="">Seleccionar...</option>
                                         <?php foreach($prioridades as $p): ?>
-                                            <option value="<?= $p->id_prioridad ?>"><?= $p->nivel ?></option>
+                                            <option value="<?= $p->pri_id ?>"><?= $p->pri_nombre ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>

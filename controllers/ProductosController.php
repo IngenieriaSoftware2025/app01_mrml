@@ -7,7 +7,7 @@ use Model\Categorias;
 use Model\Prioridades;
 use MVC\Router;
 
-class ProductoController extends ActiveRecord {
+class ProductosController extends ActiveRecord { // ✅ Nombre corregido
 
     public static function renderizarPagina(Router $router) {
         // Obtener datos para los selects
@@ -68,12 +68,15 @@ class ProductoController extends ActiveRecord {
         }
     }
 
-    public static function obtenerAPI() {
+    // ✅ Método corregido y renombrado
+    public static function buscarAPI() {
         getHeadersApi();
         
         try {
             $productos = Productos::SQL("
-                SELECT p.*, c.cat_nombre, pr.pri_nombre 
+                SELECT p.prod_id as id_producto, p.prod_nombre as nombre, p.prod_cantidad as cantidad, 
+                       c.cat_nombre as categoria, pr.pri_nombre as prioridad, p.comprado,
+                       p.cat_id as id_categoria, p.pri_id as id_prioridad
                 FROM productos p 
                 LEFT JOIN categorias c ON p.cat_id = c.cat_id 
                 LEFT JOIN prioridades pr ON p.pri_id = pr.pri_id 
@@ -83,19 +86,20 @@ class ProductoController extends ActiveRecord {
             $data = [];
             foreach ($productos as $producto) {
                 $data[] = [
-                    'prod_id' => $producto->prod_id,
-                    'prod_nombre' => $producto->prod_nombre,
-                    'prod_cantidad' => $producto->prod_cantidad,
-                    'cat_nombre' => $producto->cat_nombre ?? 'Sin categoría',
-                    'pri_nombre' => $producto->pri_nombre ?? 'Sin prioridad',
-                    'comprado' => $producto->comprado ? 'Sí' : 'No',
-                    'cat_id' => $producto->cat_id,
-                    'pri_id' => $producto->pri_id
+                    'id_producto' => $producto->id_producto,
+                    'nombre' => $producto->nombre,
+                    'cantidad' => $producto->cantidad,
+                    'categoria' => $producto->categoria ?? 'Sin categoría',
+                    'prioridad' => $producto->prioridad ?? 'Sin prioridad',
+                    'comprado' => $producto->comprado,
+                    'id_categoria' => $producto->id_categoria,
+                    'id_prioridad' => $producto->id_prioridad
                 ];
             }
             
             echo json_encode([
                 'tipo' => 'success',
+                'mensaje' => 'Productos obtenidos correctamente',
                 'data' => $data,
                 'codigo' => 1
             ]);
@@ -109,12 +113,13 @@ class ProductoController extends ActiveRecord {
         }
     }
 
-    public static function actualizarAPI() {
+    // ✅ Método agregado
+    public static function modificarAPI() {
         getHeadersApi();
         
         try {
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                $id = $_POST['prod_id'] ?? null;
+                $id = $_POST['id_producto'] ?? null;
                 
                 if (!$id) {
                     echo json_encode([
@@ -180,7 +185,7 @@ class ProductoController extends ActiveRecord {
         
         try {
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                $id = $_POST['prod_id'] ?? null;
+                $id = $_POST['id_producto'] ?? null;
                 
                 if (!$id) {
                     echo json_encode([
@@ -227,39 +232,53 @@ class ProductoController extends ActiveRecord {
         }
     }
 
-    public static function marcarCompradoAPI()
-{
-    header('Content-Type: application/json; charset=utf-8');
+    public static function marcarCompradoAPI() {
+        getHeadersApi();
 
-    $id = $_POST['id'] ?? null;
-    $comprado = $_POST['comprado'] ?? 0;
+        try {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $id = $_POST['id'] ?? null;
+                $comprado = $_POST['comprado'] ?? 0;
 
-    if (!$id) {
-        http_response_code(400);
-        echo json_encode(['codigo' => 0, 'mensaje' => 'ID no proporcionado']);
-        return;
-    }
+                if (!$id) {
+                    echo json_encode([
+                        'codigo' => 0, 
+                        'mensaje' => 'ID no proporcionado'
+                    ]);
+                    return;
+                }
 
-    try {
-        $producto = Producto::find($id);
+                $producto = Productos::find($id);
 
-        if (!$producto) {
-            http_response_code(404);
-            echo json_encode(['codigo' => 0, 'mensaje' => 'Producto no encontrado']);
-            return;
+                if (!$producto) {
+                    echo json_encode([
+                        'codigo' => 0, 
+                        'mensaje' => 'Producto no encontrado'
+                    ]);
+                    return;
+                }
+
+                $producto->comprado = $comprado;
+                $resultado = $producto->guardar();
+
+                if ($resultado['resultado']) {
+                    $mensaje = $comprado == 1 ? 'Producto marcado como comprado' : 'Producto marcado como pendiente';
+                    echo json_encode([
+                        'codigo' => 1, 
+                        'mensaje' => $mensaje
+                    ]);
+                } else {
+                    echo json_encode([
+                        'codigo' => 0, 
+                        'mensaje' => 'Error al actualizar'
+                    ]);
+                }
+            }
+        } catch (Exception $e) {
+            echo json_encode([
+                'codigo' => 0, 
+                'mensaje' => 'Error del servidor: ' . $e->getMessage()
+            ]);
         }
-
-        $producto->sincronizar(['comprado' => $comprado]);
-        $producto->actualizar();
-
-        $mensaje = $comprado == 1 ? 'Producto marcado como comprado' : 'Producto marcado como pendiente';
-        
-        http_response_code(200);
-        echo json_encode(['codigo' => 1, 'mensaje' => $mensaje]);
-
-    } catch (Exception $e) {
-        http_response_code(500);
-        echo json_encode(['codigo' => 0, 'mensaje' => 'Error al actualizar', 'detalle' => $e->getMessage()]);
     }
-}
 }

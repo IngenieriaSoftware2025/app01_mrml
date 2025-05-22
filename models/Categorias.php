@@ -32,7 +32,7 @@ class Categorias extends ActiveRecord {
             if($existente && (empty($this->cat_id) || $existente[0]->cat_id != $this->cat_id)) {
                 self::$alertas['error'][] = 'Ya existe una categoría con ese nombre';
             }
-        }
+        } // ← Esta llave faltaba
 
         return self::$alertas;
     }

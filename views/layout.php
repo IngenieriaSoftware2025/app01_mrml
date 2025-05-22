@@ -255,7 +255,7 @@
             </li>
 
             <div class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle text-white" href="#" data-bs-toggle="dropdown">
+              <a class="nav-link dropdown-toggle text-white" href="/productosMaria" data-bs-toggle="dropdown">
                 <i class="bi bi-bag-heart-fill"></i>Productos
               </a>
               <ul class="dropdown-menu dropdown-menu-dark" id="dropwdownRevision" style="margin: 0;">

@@ -121,10 +121,9 @@ const llenarFormulario = (e) => {
     document.getElementById('id').value = d.id;
     document.getElementById('nombre').value = d.nombre;
     document.getElementById('cantidad').value = d.cantidad;
-    document.getElementById('id_categoria').value = d.categoria;
+    // ✅ Cambiar estas líneas:
+    document.getElementById('id_categoria').value = d.categoria; 
     document.getElementById('id_prioridad').value = d.prioridad;
-    BtnGuardar.classList.add('d-none');
-    BtnModificar.classList.remove('d-none');
 }
 
 const limpiarTodo = () => {
