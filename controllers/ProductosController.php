@@ -226,4 +226,40 @@ class ProductoController extends ActiveRecord {
             ]);
         }
     }
+
+    public static function marcarCompradoAPI()
+{
+    header('Content-Type: application/json; charset=utf-8');
+
+    $id = $_POST['id'] ?? null;
+    $comprado = $_POST['comprado'] ?? 0;
+
+    if (!$id) {
+        http_response_code(400);
+        echo json_encode(['codigo' => 0, 'mensaje' => 'ID no proporcionado']);
+        return;
+    }
+
+    try {
+        $producto = Producto::find($id);
+
+        if (!$producto) {
+            http_response_code(404);
+            echo json_encode(['codigo' => 0, 'mensaje' => 'Producto no encontrado']);
+            return;
+        }
+
+        $producto->sincronizar(['comprado' => $comprado]);
+        $producto->actualizar();
+
+        $mensaje = $comprado == 1 ? 'Producto marcado como comprado' : 'Producto marcado como pendiente';
+        
+        http_response_code(200);
+        echo json_encode(['codigo' => 1, 'mensaje' => $mensaje]);
+
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo json_encode(['codigo' => 0, 'mensaje' => 'Error al actualizar', 'detalle' => $e->getMessage()]);
+    }
+}
 }

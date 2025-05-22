@@ -1,29 +1,27 @@
 <?php 
 require_once __DIR__ . '/../includes/app.php';
 
-use Controllers\CategoriaController;
 use MVC\Router;
 use Controllers\AppController;
-use Controllers\ProductoController;
+use Controllers\ProductosController;
+use Controllers\CategoriaController;
 
 $router = new Router();
 $router->setBaseURL('/' . $_ENV['APP_NAME']);
 
+// Rutas GET
 $router->get('/', [AppController::class,'index']);
+$router->get('/productosMaria', [ProductosController::class,'renderizarPagina']);
+$router->get('/CategoriaMaria', [CategoriaController::class,'renderizarPagina']);
 
-// RUTAS DE CATEGORÍAS
-$router->get('/categorias', [CategoriaController::class, 'renderizarPagina']);
-$router->post('/categorias/guardarAPI', [CategoriaController::class, 'guardarAPI']);
-$router->post('/categorias/obtenerAPI', [CategoriaController::class, 'obtenerAPI']);
-$router->post('/categorias/actualizarAPI', [CategoriaController::class, 'actualizarAPI']);
-$router->post('/categorias/eliminarAPI', [CategoriaController::class, 'eliminarAPI']);
+// Rutas POST para las APIs
+$router->post('/productos/guardarAPI', [ProductosController::class,'guardarAPI']);
+$router->post('/productos/buscarAPI', [ProductosController::class,'buscarAPI']);
+$router->post('/productos/modificarAPI', [ProductosController::class,'modificarAPI']);
+$router->post('/productos/eliminarAPI', [ProductosController::class,'eliminarAPI']);
+$router->post('/productos/marcarCompradoAPI', [ProductosController::class,'marcarCompradoAPI']);
 
-// RUTAS DE PRODUCTOS
-$router->get('/productos', [ProductoController::class, 'renderizarPagina']);
-$router->post('/productos/guardarAPI', [ProductoController::class, 'guardarAPI']);
-$router->post('/productos/obtenerAPI', [ProductoController::class, 'obtenerAPI']);
-$router->post('/productos/actualizarAPI', [ProductoController::class, 'actualizarAPI']);
-$router->post('/productos/eliminarAPI', [ProductoController::class, 'eliminarAPI']);
+// También agrega la ruta GET para buscar (por si acaso)
+$router->get('/productos/buscarAPI', [ProductosController::class,'buscarAPI']);
 
-// Comprueba y valida las rutas, que existan y les asigna las funciones del Controlador
 $router->comprobarRutas();
