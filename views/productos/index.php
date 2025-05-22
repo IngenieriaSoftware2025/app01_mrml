@@ -62,22 +62,23 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
-                                <label for="id_prioridad" class="form-label">Prioridad</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="bi bi-star"></i></span>
-                                    <select class="form-select" id="id_prioridad" name="id_prioridad" required>
-                                        <option value="">Seleccionar...</option>
-                                        <?php if (isset($prioridades) && !empty($prioridades)): ?>
-                                            <?php foreach($prioridades as $p): ?>
-                                                <option value="<?= $p->id_prioridad ?>"><?= $p->nivel ?></option>
-                                            <?php endforeach; ?>
-                                        <?php else: ?>
-                                            <option value="" disabled>No hay prioridades disponibles</option>
-                                        <?php endif; ?>
-                                    </select>
-                                </div>
-                            </div>
+<div class="col-md-6">
+    <label for="id_prioridad" class="form-label">Prioridad</label>
+    <div class="input-group">
+        <span class="input-group-text"><i class="bi bi-star"></i></span>
+        <select class="form-select" id="id_prioridad" name="id_prioridad" required>
+            <option value="">Seleccionar...</option>
+            <?php if (isset($prioridades) && !empty($prioridades)): ?>
+                <?php foreach($prioridades as $p): ?>
+                    <!-- Debug temporal: <?= "ID: " . $p->id_prioridad . " - Nivel: " . $p->nivel ?> -->
+                    <option value="<?= $p->id_prioridad ?>"><?= $p->nivel ?></option>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <option value="" disabled>No hay prioridades disponibles</option>
+            <?php endif; ?>
+        </select>
+    </div>
+</div>
 
                             <div class="col-12">
                                 <label for="notas_adicionales" class="form-label">Notas Adicionales (opcional)</label>

@@ -13,6 +13,7 @@ const GuardarProducto = async (event) => {
     event.preventDefault();
     BtnGuardar.disabled = true;
 
+    // ✅ VALIDACIÓN REACTIVADA CON MEJOR MANEJO
     if (!validarFormulario(FormProductos, ['id_producto'])) {
         Swal.fire({
             icon: "info",
@@ -28,17 +29,33 @@ const GuardarProducto = async (event) => {
 
     try {
         const res = await fetch(url, { method: 'POST', body });
-        const { codigo, mensaje } = await res.json();
+        const response = await res.json();
+        
+        console.log('Respuesta del servidor:', response); // Debug
 
-        if (codigo == 1) {
-            await Swal.fire({ icon: 'success', title: 'Éxito', text: mensaje });
+        if (response.codigo == 1) {
+            await Swal.fire({ 
+                icon: 'success', 
+                title: 'Éxito', 
+                text: response.mensaje 
+            });
             limpiarTodo();
             BuscarProductos();
         } else {
-            await Swal.fire({ icon: 'info', title: 'Error', text: mensaje });
+            await Swal.fire({ 
+                icon: 'error', 
+                title: 'Error', 
+                text: response.mensaje,
+                footer: response.debug ? `Debug: ${JSON.stringify(response.debug)}` : ''
+            });
         }
     } catch (e) {
-        console.error(e);
+        console.error('Error en GuardarProducto:', e);
+        await Swal.fire({
+            icon: 'error',
+            title: 'Error de conexión',
+            text: 'No se pudo conectar con el servidor'
+        });
     }
     BtnGuardar.disabled = false;
 }
@@ -47,21 +64,21 @@ const BuscarProductos = async () => {
     const url = '/app01_mrml/productos/buscarAPI';
     try {
         const res = await fetch(url);
-        const { codigo, mensaje, data } = await res.json();
+        const response = await res.json();
 
-        if (codigo == 1) {
-            const pendientes = data.filter(p => p.comprado == 0);
-            const comprados = data.filter(p => p.comprado == 1);
+        if (response.codigo == 1) {
+            const pendientes = response.data.filter(p => p.comprado == 0);
+            const comprados = response.data.filter(p => p.comprado == 1);
 
             datatablePendientes.clear().rows.add(pendientes).draw();
             datatableComprados.clear().rows.add(comprados).draw();
 
-            Toast.fire({ icon: 'success', title: mensaje });
+            Toast.fire({ icon: 'success', title: response.mensaje });
         } else {
-            Swal.fire({ icon: 'info', title: 'Error', text: mensaje });
+            Swal.fire({ icon: 'info', title: 'Error', text: response.mensaje });
         }
     } catch (e) {
-        console.error(e);
+        console.error('Error en BuscarProductos:', e);
     }
 }
 
@@ -80,7 +97,7 @@ const datatablePendientes = new DataTable('#TableProductosPendientes', {
                 if (data === 'Alta') badge = 'badge bg-danger';
                 else if (data === 'Media') badge = 'badge bg-warning text-dark';
                 else if (data === 'Baja') badge = 'badge bg-success';
-                return `<span class="${badge}">${data}</span>`;
+                return `<span class="${badge}">${data || 'Sin prioridad'}</span>`;
             }
         },
         {
@@ -88,7 +105,7 @@ const datatablePendientes = new DataTable('#TableProductosPendientes', {
             render: (id, t, row) => `
                 <button class='btn btn-warning btn-sm modificar' data-id='${id}'
                         data-nombre='${row.nombre}' data-cantidad='${row.cantidad}'
-                        data-categoria='${row.id_categoria}' data-prioridad='${row.id_prioridad}'>
+                        data-id_categoria='${row.id_categoria}' data-id_prioridad='${row.id_prioridad}'>
                     <i class='bi bi-pencil'></i> Editar
                 </button>
                 <button class='btn btn-success btn-sm marcarComprado' data-id='${id}'>
@@ -118,14 +135,22 @@ const datatableComprados = new DataTable('#TableProductosComprados', {
 
 const llenarFormulario = (e) => {
     const d = e.currentTarget.dataset;
+
+    // Llenar campos básicos
     document.getElementById('id').value = d.id;
     document.getElementById('nombre').value = d.nombre;
     document.getElementById('cantidad').value = d.cantidad;
-    // ✅ Cambiar estas líneas:
-    document.getElementById('id_categoria').value = d.categoria; 
-    document.getElementById('id_prioridad').value = d.prioridad;
+
+    // ✅ USAR LOS IDs CORRECTOS:
+    document.getElementById('id_categoria').value = d.id_categoria;
+    document.getElementById('id_prioridad').value = d.id_prioridad;
+
+    // Cambiar botones
+    BtnGuardar.classList.add('d-none');
+    BtnModificar.classList.remove('d-none');
 }
 
+// ✅ FUNCIÓN LIMPIAR TODO AGREGADA
 const limpiarTodo = () => {
     FormProductos.reset();
     BtnGuardar.classList.remove('d-none');
@@ -147,17 +172,25 @@ const ModificarProducto = async (event) => {
 
     try {
         const res = await fetch(url, { method: 'POST', body });
-        const { codigo, mensaje } = await res.json();
+        const response = await res.json();
 
-        if (codigo == 1) {
-            await Swal.fire({ icon: 'success', title: 'Éxito', text: mensaje });
+        if (response.codigo == 1) {
+            await Swal.fire({ 
+                icon: 'success', 
+                title: 'Éxito', 
+                text: response.mensaje 
+            });
             limpiarTodo();
             BuscarProductos();
         } else {
-            Swal.fire({ icon: 'info', title: 'Error', text: mensaje });
+            Swal.fire({ 
+                icon: 'info', 
+                title: 'Error', 
+                text: response.mensaje 
+            });
         }
     } catch (e) {
-        console.error(e);
+        console.error('Error en ModificarProducto:', e);
     }
     BtnModificar.disabled = false;
 }
@@ -172,9 +205,17 @@ const cambiarEstado = async (id, comprado) => {
 
     try {
         const res = await fetch(url, config);
-        const { codigo, mensaje } = await res.json();
-        if (codigo == 1) BuscarProductos();
-    } catch (e) { console.error(e); }
+        const response = await res.json();
+        if (response.codigo == 1) {
+            BuscarProductos();
+            Toast.fire({ 
+                icon: 'success', 
+                title: comprado == 1 ? 'Producto marcado como comprado' : 'Producto marcado como pendiente'
+            });
+        }
+    } catch (e) { 
+        console.error('Error en cambiarEstado:', e);
+    }
 }
 
 // Event listeners
@@ -186,4 +227,5 @@ FormProductos.addEventListener('submit', GuardarProducto);
 BtnLimpiar.addEventListener('click', limpiarTodo);
 BtnModificar.addEventListener('click', ModificarProducto);
 
+// Inicializar
 BuscarProductos();
