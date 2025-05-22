@@ -1,206 +1,229 @@
 <?php
-
 namespace Controllers;
 
+use Model\ActiveRecord;
+use Model\Productos;
+use Model\Categorias;
+use Model\Prioridades;
 use MVC\Router;
-use Model\Categoria;
-use Model\Prioridad;
-use Model\Producto;
-use Exception;
 
-class ProductosController
-{
-    // Muestra la vista principal con categorías y prioridades
-    public static function renderizarPagina(Router $router)
-    {
-        $categorias = Categoria::all();
-        $prioridades = Prioridad::all();
+class ProductoController extends ActiveRecord {
 
+    public static function renderizarPagina(Router $router) {
+        // Obtener datos para los selects
+        $categorias = Categorias::all();
+        $prioridades = Prioridades::all();
+        $productos = Productos::all();
+        
         $router->render('productos/index', [
             'categorias' => $categorias,
-            'prioridades' => $prioridades
+            'prioridades' => $prioridades,
+            'productos' => $productos
         ]);
     }
 
-    // Guarda un nuevo producto en la base de datos
-    public static function guardarAPI()
-    {
-        header('Content-Type: application/json; charset=utf-8');
-
-        // Validar campos
-        if(empty($_POST['nombre'])) {
-            http_response_code(400);
-            echo json_encode(['codigo' => 0, 'mensaje' => 'El nombre del producto es obligatorio']);
-            return;
-        }
-
-        $_POST['cantidad'] = filter_var($_POST['cantidad'], FILTER_VALIDATE_INT);
-        if(!$_POST['cantidad'] || $_POST['cantidad'] <= 0) {
-            http_response_code(400);
-            echo json_encode(['codigo' => 0, 'mensaje' => 'La cantidad debe ser un número positivo']);
-            return;
-        }
-
-        $_POST['id_categoria'] = filter_var($_POST['id_categoria'], FILTER_VALIDATE_INT);
-        if(!$_POST['id_categoria']) {
-            http_response_code(400);
-            echo json_encode(['codigo' => 0, 'mensaje' => 'Selecciona una categoría válida']);
-            return;
-        }
-
-        $_POST['id_prioridad'] = filter_var($_POST['id_prioridad'], FILTER_VALIDATE_INT);
-        if(!$_POST['id_prioridad']) {
-            http_response_code(400);
-            echo json_encode(['codigo' => 0, 'mensaje' => 'Selecciona una prioridad válida']);
-            return;
-        }
-
+    public static function guardarAPI() {
+        getHeadersApi();
+        
         try {
-            $producto = new Producto([
-                'nombre' => $_POST['nombre'],
-                'cantidad' => $_POST['cantidad'],
-                'id_categoria' => $_POST['id_categoria'],
-                'id_prioridad' => $_POST['id_prioridad'],
-                'notas_adicionales' => $_POST['notas_adicionales'] ?? null,
-                'comprado' => 0
-            ]);
-
-            $producto->crear();
-
-            http_response_code(200);
-            echo json_encode(['codigo' => 1, 'mensaje' => 'Producto guardado exitosamente']);
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                // Crear nuevo producto
+                $producto = new Productos($_POST);
+                
+                // Validar datos
+                $alertas = $producto->validar();
+                
+                if (empty($alertas)) {
+                    $resultado = $producto->guardar();
+                    
+                    if ($resultado['resultado']) {
+                        echo json_encode([
+                            'tipo' => 'success',
+                            'mensaje' => 'Producto guardado correctamente',
+                            'codigo' => 1,
+                            'data' => $resultado
+                        ]);
+                    } else {
+                        echo json_encode([
+                            'tipo' => 'error',
+                            'mensaje' => 'Error al guardar el producto',
+                            'codigo' => 0
+                        ]);
+                    }
+                } else {
+                    echo json_encode([
+                        'tipo' => 'error',
+                        'mensaje' => 'Datos inválidos',
+                        'alertas' => $alertas,
+                        'codigo' => 0
+                    ]);
+                }
+            }
         } catch (Exception $e) {
-            http_response_code(500);
-            echo json_encode(['codigo' => 0, 'mensaje' => 'Error al guardar', 'detalle' => $e->getMessage()]);
+            echo json_encode([
+                'tipo' => 'error',
+                'mensaje' => 'Error del servidor: ' . $e->getMessage(),
+                'codigo' => 0
+            ]);
         }
     }
 
-    // Muestra todos los productos con JOIN a categoría y prioridad
-    public static function buscarAPI()
-    {
-        header('Content-Type: application/json; charset=utf-8');
-
+    public static function obtenerAPI() {
+        getHeadersApi();
+        
         try {
-            $sql = "
-                SELECT 
-                    p.id_producto,
-                    p.nombre,
-                    p.cantidad,
-                    p.notas_adicionales,
-                    p.comprado,
-                    c.nombre AS categoria,
-                    pr.nivel AS prioridad
-                FROM productos p
-                JOIN categorias c ON p.id_categoria = c.id_categoria
-                JOIN prioridades pr ON p.id_prioridad = pr.id_prioridad
-                ORDER BY p.comprado ASC, c.nombre ASC, pr.id_prioridad ASC
-            ";
-
-            $data = Producto::fetchArray($sql);
-
-            http_response_code(200);
+            $productos = Productos::SQL("
+                SELECT p.*, c.cat_nombre, pr.pri_nombre 
+                FROM productos p 
+                LEFT JOIN categorias c ON p.cat_id = c.cat_id 
+                LEFT JOIN prioridades pr ON p.pri_id = pr.pri_id 
+                ORDER BY p.prod_id DESC
+            ");
+            
+            $data = [];
+            foreach ($productos as $producto) {
+                $data[] = [
+                    'prod_id' => $producto->prod_id,
+                    'prod_nombre' => $producto->prod_nombre,
+                    'prod_cantidad' => $producto->prod_cantidad,
+                    'cat_nombre' => $producto->cat_nombre ?? 'Sin categoría',
+                    'pri_nombre' => $producto->pri_nombre ?? 'Sin prioridad',
+                    'comprado' => $producto->comprado ? 'Sí' : 'No',
+                    'cat_id' => $producto->cat_id,
+                    'pri_id' => $producto->pri_id
+                ];
+            }
+            
             echo json_encode([
-                'codigo' => 1,
-                'mensaje' => 'Productos obtenidos correctamente',
-                'data' => $data
+                'tipo' => 'success',
+                'data' => $data,
+                'codigo' => 1
             ]);
+            
         } catch (Exception $e) {
-            http_response_code(400);
             echo json_encode([
-                'codigo' => 0,
-                'mensaje' => 'Error al obtener los productos',
-                'detalle' => $e->getMessage()
+                'tipo' => 'error',
+                'mensaje' => 'Error al obtener productos: ' . $e->getMessage(),
+                'codigo' => 0
             ]);
         }
     }
 
-    public static function modificarAPI()
-    {
-    header('Content-Type: application/json; charset=utf-8');
-
-    $id = $_POST['id_producto'] ?? null;
-
-    if (!$id) {
-        http_response_code(400);
-        echo json_encode(['codigo' => 0, 'mensaje' => 'ID de producto no proporcionado']);
-        return;
-    }
-
-    // Validaciones como en guardar
-    if (empty($_POST['nombre'])) {
-        http_response_code(400);
-        echo json_encode(['codigo' => 0, 'mensaje' => 'El nombre es obligatorio']);
-        return;
-    }
-
-    $_POST['cantidad'] = filter_var($_POST['cantidad'], FILTER_VALIDATE_INT);
-    if (!$_POST['cantidad'] || $_POST['cantidad'] <= 0) {
-        http_response_code(400);
-        echo json_encode(['codigo' => 0, 'mensaje' => 'Cantidad inválida']);
-        return;
-    }
-
-    $_POST['id_categoria'] = filter_var($_POST['id_categoria'], FILTER_VALIDATE_INT);
-    $_POST['id_prioridad'] = filter_var($_POST['id_prioridad'], FILTER_VALIDATE_INT);
-
-    try {
-        $producto = Producto::find($id);
-
-        if (!$producto) {
-            http_response_code(404);
-            echo json_encode(['codigo' => 0, 'mensaje' => 'Producto no encontrado']);
-            return;
+    public static function actualizarAPI() {
+        getHeadersApi();
+        
+        try {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $id = $_POST['prod_id'] ?? null;
+                
+                if (!$id) {
+                    echo json_encode([
+                        'tipo' => 'error',
+                        'mensaje' => 'ID de producto requerido',
+                        'codigo' => 0
+                    ]);
+                    return;
+                }
+                
+                $producto = Productos::find($id);
+                
+                if (!$producto) {
+                    echo json_encode([
+                        'tipo' => 'error',
+                        'mensaje' => 'Producto no encontrado',
+                        'codigo' => 0
+                    ]);
+                    return;
+                }
+                
+                // Sincronizar con nuevos datos
+                $producto->sincronizar($_POST);
+                
+                $alertas = $producto->validar();
+                
+                if (empty($alertas)) {
+                    $resultado = $producto->guardar();
+                    
+                    if ($resultado['resultado']) {
+                        echo json_encode([
+                            'tipo' => 'success',
+                            'mensaje' => 'Producto actualizado correctamente',
+                            'codigo' => 1
+                        ]);
+                    } else {
+                        echo json_encode([
+                            'tipo' => 'error',
+                            'mensaje' => 'Error al actualizar el producto',
+                            'codigo' => 0
+                        ]);
+                    }
+                } else {
+                    echo json_encode([
+                        'tipo' => 'error',
+                        'mensaje' => 'Datos inválidos',
+                        'alertas' => $alertas,
+                        'codigo' => 0
+                    ]);
+                }
+            }
+        } catch (Exception $e) {
+            echo json_encode([
+                'tipo' => 'error',
+                'mensaje' => 'Error del servidor: ' . $e->getMessage(),
+                'codigo' => 0
+            ]);
         }
+    }
 
-        $producto->sincronizar([
-            'nombre' => $_POST['nombre'],
-            'cantidad' => $_POST['cantidad'],
-            'id_categoria' => $_POST['id_categoria'],
-            'id_prioridad' => $_POST['id_prioridad'],
-            'notas_adicionales' => $_POST['notas_adicionales'] ?? null,
-            'comprado' => $_POST['comprado'] ?? 0
-        ]);
-
-        $producto->actualizar();
-
-        http_response_code(200);
-        echo json_encode(['codigo' => 1, 'mensaje' => 'Producto actualizado correctamente']);
-
-    } catch (Exception $e) {
-        http_response_code(500);
-        echo json_encode(['codigo' => 0, 'mensaje' => 'Error al actualizar', 'detalle' => $e->getMessage()]);
+    public static function eliminarAPI() {
+        getHeadersApi();
+        
+        try {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $id = $_POST['prod_id'] ?? null;
+                
+                if (!$id) {
+                    echo json_encode([
+                        'tipo' => 'error',
+                        'mensaje' => 'ID de producto requerido',
+                        'codigo' => 0
+                    ]);
+                    return;
+                }
+                
+                $producto = Productos::find($id);
+                
+                if (!$producto) {
+                    echo json_encode([
+                        'tipo' => 'error',
+                        'mensaje' => 'Producto no encontrado',
+                        'codigo' => 0
+                    ]);
+                    return;
+                }
+                
+                $resultado = $producto->eliminar();
+                
+                if ($resultado) {
+                    echo json_encode([
+                        'tipo' => 'success',
+                        'mensaje' => 'Producto eliminado correctamente',
+                        'codigo' => 1
+                    ]);
+                } else {
+                    echo json_encode([
+                        'tipo' => 'error',
+                        'mensaje' => 'Error al eliminar el producto',
+                        'codigo' => 0
+                    ]);
+                }
+            }
+        } catch (Exception $e) {
+            echo json_encode([
+                'tipo' => 'error',
+                'mensaje' => 'Error del servidor: ' . $e->getMessage(),
+                'codigo' => 0
+            ]);
         }
     }
-public static function eliminarAPI()
-    {
-    header('Content-Type: application/json; charset=utf-8');
-
-    $id = $_POST['id_producto'] ?? null;
-
-    if (!$id) {
-        http_response_code(400);
-        echo json_encode(['codigo' => 0, 'mensaje' => 'ID no proporcionado']);
-        return;
-    }
-
-    try {
-        $producto = Producto::find($id);
-
-        if (!$producto) {
-            http_response_code(404);
-            echo json_encode(['codigo' => 0, 'mensaje' => 'Producto no encontrado']);
-            return;
-        }
-
-        $producto->eliminar();
-
-        http_response_code(200);
-        echo json_encode(['codigo' => 1, 'mensaje' => 'Producto eliminado correctamente']);
-
-    } catch (Exception $e) {
-        http_response_code(500);
-        echo json_encode(['codigo' => 0, 'mensaje' => 'Error al eliminar', 'detalle' => $e->getMessage()]);
-    }
-    }
-
 }

@@ -1,25 +1,29 @@
 <?php 
 require_once __DIR__ . '/../includes/app.php';
 
-//--aqui se agrega los controladores
-
+use Controllers\CategoriaController;
 use MVC\Router;
 use Controllers\AppController;
-use Controllers\ProductosController;
-use Controllers\CategoriaController;
+use Controllers\ProductoController;
 
-//-----a
 $router = new Router();
 $router->setBaseURL('/' . $_ENV['APP_NAME']);
 
-//Aqui agrego las rutas
 $router->get('/', [AppController::class,'index']);
-$router->get('/productosMaria', [ProductosController::class,'renderizarPagina']);
-$router->get('/CategoriaMaria', [CategoriaController::class,'renderizarPagina']);
 
+// RUTAS DE CATEGORÍAS
+$router->get('/categorias', [CategoriaController::class, 'renderizarPagina']);
+$router->post('/categorias/guardarAPI', [CategoriaController::class, 'guardarAPI']);
+$router->post('/categorias/obtenerAPI', [CategoriaController::class, 'obtenerAPI']);
+$router->post('/categorias/actualizarAPI', [CategoriaController::class, 'actualizarAPI']);
+$router->post('/categorias/eliminarAPI', [CategoriaController::class, 'eliminarAPI']);
 
-//-------------------------------------------------------
-
+// RUTAS DE PRODUCTOS
+$router->get('/productos', [ProductoController::class, 'renderizarPagina']);
+$router->post('/productos/guardarAPI', [ProductoController::class, 'guardarAPI']);
+$router->post('/productos/obtenerAPI', [ProductoController::class, 'obtenerAPI']);
+$router->post('/productos/actualizarAPI', [ProductoController::class, 'actualizarAPI']);
+$router->post('/productos/eliminarAPI', [ProductoController::class, 'eliminarAPI']);
 
 // Comprueba y valida las rutas, que existan y les asigna las funciones del Controlador
 $router->comprobarRutas();
