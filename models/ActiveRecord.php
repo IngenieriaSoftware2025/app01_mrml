@@ -183,9 +183,11 @@ class ActiveRecord {
         return $array;
     }
 
+    // ✅ FUNCIÓN CORREGIDA
     public static function fetchArray($query){
         $resultado = self::$db->query($query);
         $respuesta = $resultado->fetchAll(PDO::FETCH_ASSOC);
+        $data = []; // ✅ LÍNEA AGREGADA - ESTO ARREGLA EL ERROR
         foreach ($respuesta as $value) {
             $data[] = array_change_key_case( array_map( 'utf8_encode', $value) ); 
         }
@@ -193,11 +195,10 @@ class ActiveRecord {
         return $data;
     }
 
-        
     public static function fetchFirst($query){
         $resultado = self::$db->query($query);
         $respuesta = $resultado->fetchAll(PDO::FETCH_ASSOC);
-        $data = [];
+        $data = []; // ✅ YA ESTABA BIEN
         foreach ($respuesta as $value) {
             $data[] = array_change_key_case( array_map( 'utf8_encode', $value) ); 
         }
@@ -217,8 +218,6 @@ class ActiveRecord {
 
         return $objeto;
     }
-
-
 
     // Identificar y unir los atributos de la BD
     public function atributos() {
@@ -248,3 +247,4 @@ class ActiveRecord {
         }
     }
 }
+?>

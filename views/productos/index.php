@@ -8,7 +8,7 @@
                         <h3 class="fw-bold text-pink mb-0">ORGANIZA TU COMPRA</h3>
                     </div>
 
-                    <form id="formProducto" class="p-4 bg-white rounded-4 shadow-sm border border-2 border-pink">
+                    <form id="FormProducto" class="p-4 bg-white rounded-4 shadow-sm border border-2 border-pink">
                         <input type="hidden" id="id" name="id_producto">
 
                         <div class="row g-3 mb-3">
@@ -67,32 +67,28 @@
     </div>
 
 
-     <!-- Sección de productos por categoria -->
-    <div class="row justify-content-center mt-5">
-        <div class="col-lg-11">
-            <div class="card shadow-lg border-0 rounded-3" style="border-left: 5px solid #1e5f8a !important;">
-                <div class="card-body">
-                    <h3 class="text-center mb-4">Lista de Compras por Categoría</h3>
-                    
-                    <!-- Contenedor para productos por categoría -->
-                    <div id="productosContainer">
+     <!-- AGREGAR ESTO DESPUÉS DEL FORMULARIO, antes de la sección "Lista de Compras por Categoría" -->
 
-                        <!-- Aquí se cargarán los productos agrupados por categoría -->
-                    </div>
-
-
-                    <!-- Sección de productos comprados -->
-                    
-                    <div class="mt-5">
-                        <h4 class="text-success mb-3">
-                            <i class="bi bi-check-circle me-2"></i>Productos Comprados
-                        </h4>
-                        <div id="productosComprados" class="border rounded p-3 bg-light">
-
-                            <!-- Aquí se mostrarán los productos marcados como comprados -->
-                        
-                        </div>
-                    </div>
+<div class="row justify-content-center mt-5">
+    <div class="col-lg-11">
+        <div class="card shadow-lg border-0 rounded-3 mb-4">
+            <div class="card-body">
+                <h4 class="text-center mb-4 text-primary">📋 Productos Pendientes</h4>
+                <div class="table-responsive">
+                    <table id="TableProductosPendientes" class="table table-striped table-hover">
+                        <!-- DataTable se genera automáticamente -->
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card shadow-lg border-0 rounded-3">
+            <div class="card-body">
+                <h4 class="text-center mb-4 text-success">✅ Productos Comprados</h4>
+                <div class="table-responsive">
+                    <table id="TableProductosComprados" class="table table-striped table-hover">
+                        <!-- DataTable se genera automáticamente -->
+                    </table>
                 </div>
             </div>
         </div>
