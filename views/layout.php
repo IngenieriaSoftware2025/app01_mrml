@@ -21,6 +21,29 @@
 
     <style>
     /* Estilos para la página de bienvenida */
+    
+    .text-pink { color: #e91e63; }
+    .text-purple { color: #9c27b0; }
+    .border-pink { border-color: #f48fb1 !important; }
+    .border-purple { border-color: #ce93d8 !important; }
+
+    .btn-pink {
+        background-color: #f48fb1;
+        color: white;
+    }
+    .btn-pink:hover {
+        background-color: #ec407a;
+    }
+
+    .btn-lavender {
+        background-color: #ce93d8;
+        color: white;
+    }
+    .btn-lavender:hover {
+        background-color: #ba68c8;
+    }
+
+    
     body {
         background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 100%);
         font-family: 'Poppins', sans-serif;
@@ -255,12 +278,12 @@
             </li>
 
             <div class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle text-white" href="/productosMaria" data-bs-toggle="dropdown">
+              <a class="nav-link dropdown-toggle text-white" href="/app01_mrml/productos" data-bs-toggle="dropdown">
                 <i class="bi bi-bag-heart-fill"></i>Productos
               </a>
               <ul class="dropdown-menu dropdown-menu-dark" id="dropwdownRevision" style="margin: 0;">
                 <li>
-                  <a class="dropdown-item nav-link text-white" href="/app01_mrml/productosMaria">
+                  <a class="dropdown-item nav-link text-white" href="/app01_mrml/productos">
                     <i class="bi bi-plus-circle-dotted"></i>Registrar 
                   </a>
                 </li>

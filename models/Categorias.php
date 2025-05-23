@@ -19,7 +19,7 @@ class Categorias extends ActiveRecord {
     public $nombre;
 
     public function __construct($args = []){
-        $this->id_categoria = $args['id_producto'] ?? null;
+        $this->id_categoria = $args['id_categoria'] ?? null;
         $this->nombre = $args['nombre'] ?? '';
     }
 

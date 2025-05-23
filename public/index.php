@@ -4,24 +4,28 @@ require_once __DIR__ . '/../includes/app.php';
 use MVC\Router;
 use Controllers\AppController;
 use Controllers\ProductosController;
-use Controllers\CategoriaController;
+
 
 $router = new Router();
+
+// Si usás subcarpeta, esto se queda. Si estás en la raíz, podés comentarlo
 $router->setBaseURL('/' . $_ENV['APP_NAME']);
 
-// Rutas GET
-$router->get('/', [AppController::class,'index']);
-$router->get('/productosMaria', [ProductosController::class,'renderizarPagina']);
-$router->get('/CategoriaMaria', [CategoriaController::class,'renderizarPagina']);
+// Rutas principales
+$router->get('/', [AppController::class, 'index']);
 
-// Rutas POST para las APIs
-$router->post('/productos/guardarAPI', [ProductosController::class,'guardarAPI']);
-$router->post('/productos/buscarAPI', [ProductosController::class,'buscarAPI']);
-$router->post('/productos/modificarAPI', [ProductosController::class,'modificarAPI']);
-$router->post('/productos/eliminarAPI', [ProductosController::class,'eliminarAPI']);
-$router->post('/productos/marcarCompradoAPI', [ProductosController::class,'marcarCompradoAPI']);
+// Vistas
+$router->get('/productos', [ProductosController::class, 'renderizarPagina']);
 
-// También agrega la ruta GET para buscar (por si acaso)
-$router->get('/productos/buscarAPI', [ProductosController::class,'buscarAPI']);
+// Productos - API
+$router->post('/productos/guardarAPI', [ProductosController::class, 'guardarAPI']);
+$router->post('/productos/buscarAPI', [ProductosController::class, 'buscarAPI']);
+$router->post('/productos/modificarAPI', [ProductosController::class, 'modificarAPI']);
+$router->post('/productos/eliminarAPI', [ProductosController::class, 'eliminarAPI']);
+$router->post('/productos/cambiarEstadoAPI', [ProductosController::class, 'cambiarEstadoAPI']);
 
+// Si querés permitir GET para buscar
+$router->get('/productos/buscarAPI', [ProductosController::class, 'buscarAPI']);
+
+// Confirmar rutas
 $router->comprobarRutas();
