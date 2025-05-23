@@ -48,7 +48,6 @@
                             <textarea class="form-control rounded-3 border-light" id="notas_adicionales" name="notas_adicionales" rows="2" placeholder="Saba, Buenas Noches"></textarea>
                         </div>
                         
-                        <!-- Estos botones los agrege con  -->
                         <div class="d-flex justify-content-center gap-3">
                             <button class="btn btn-pink btn-lg px-4 rounded-pill shadow-sm" type="submit" id="BtnGuardar">
                                 💾 Guardar
@@ -66,33 +65,45 @@
         </div>
     </div>
 
-
-     <!-- AGREGAR ESTO DESPUÉS DEL FORMULARIO, antes de la sección "Lista de Compras por Categoría" -->
-
-<div class="row justify-content-center mt-5">
-    <div class="col-lg-11">
-        <div class="card shadow-lg border-0 rounded-3 mb-4">
-            <div class="card-body">
-                <h4 class="text-center mb-4 text-primary">📋 Productos Pendientes</h4>
-                <div class="table-responsive">
-                    <table id="TableProductosPendientes" class="table table-striped table-hover">
-                        <!-- DataTable se genera automáticamente -->
-                    </table>
+    <!-- ✅ SECCIÓN DE TABLAS PARA PRODUCTOS -->
+    <div class="row justify-content-center mt-5">
+        <div class="col-lg-11">
+            <!-- PRODUCTOS PENDIENTES -->
+            <div class="card shadow-lg border-0 rounded-3 mb-4">
+                <div class="card-body">
+                    <h4 class="text-center mb-4 text-primary">
+                        <i class="bi bi-list-check"></i> 📋 Productos Pendientes
+                    </h4>
+                    <div id="TableProductosPendientes">
+                        <!-- Aquí se cargarán los productos pendientes -->
+                        <div class="text-center py-4">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Cargando...</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-        
-        <div class="card shadow-lg border-0 rounded-3">
-            <div class="card-body">
-                <h4 class="text-center mb-4 text-success">✅ Productos Comprados</h4>
-                <div class="table-responsive">
-                    <table id="TableProductosComprados" class="table table-striped table-hover">
-                        <!-- DataTable se genera automáticamente -->
-                    </table>
+            
+            <!-- PRODUCTOS COMPRADOS -->
+            <div class="card shadow-lg border-0 rounded-3">
+                <div class="card-body">
+                    <h4 class="text-center mb-4 text-success">
+                        <i class="bi bi-check-circle"></i> ✅ Productos Comprados
+                    </h4>
+                    <div id="TableProductosComprados">
+                        <!-- Aquí se cargarán los productos comprados -->
+                        <div class="text-center py-4">
+                            <div class="spinner-border text-success" role="status">
+                                <span class="visually-hidden">Cargando...</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 
 <script src="<?= asset('build/js/productos/index.js') ?>"></script>

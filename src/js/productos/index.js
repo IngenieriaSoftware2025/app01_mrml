@@ -2,30 +2,18 @@ import { Dropdown } from "bootstrap";
 import Swal from "sweetalert2";
 import { validarFormulario } from '../funciones';
 
-console.log('📜 Script cargado, esperando DOM...');
-
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 DOM cargado, iniciando aplicación...');
-
-    // ✅ ELEMENTOS DEL DOM
+    // ELEMENTOS DEL DOM
     const FormProductos = document.getElementById('FormProducto');
     const BtnGuardar = document.getElementById('BtnGuardar');
     const BtnModificar = document.getElementById('BtnModificar');
     const BtnLimpiar = document.getElementById('BtnLimpiar');
 
-    console.log('📋 Elementos encontrados:', {
-        FormProductos: !!FormProductos,
-        BtnGuardar: !!BtnGuardar,
-        BtnModificar: !!BtnModificar,
-        BtnLimpiar: !!BtnLimpiar
-    });
-
     if (!FormProductos) {
-        console.error('❌ ERROR: Formulario FormProducto no encontrado');
         return;
     }
 
-    // ✅ TOAST PARA NOTIFICACIONES
+    // TOAST PARA NOTIFICACIONES
     const Toast = Swal.mixin({
         toast: true,
         position: 'top-end',
@@ -34,26 +22,16 @@ document.addEventListener('DOMContentLoaded', function() {
         timerProgressBar: true
     });
 
-    // ✅ FUNCIÓN GUARDAR PRODUCTO
+    // FUNCIÓN GUARDAR PRODUCTO
     const GuardarProducto = async (event) => {
-        console.log('💾 GuardarProducto ejecutado');
         event.preventDefault();
-        
-        console.log('🛑 preventDefault ejecutado - página no debería recargar');
-        
         BtnGuardar.disabled = true;
 
-        // ✅ VALIDACIÓN MANUAL ESPECÍFICA
+        // VALIDACIÓN MANUAL ESPECÍFICA
         const nombre = document.getElementById('nombre').value.trim();
         const cantidad = document.getElementById('cantidad').value;
         const categoria = document.getElementById('id_categoria').value;
         const prioridad = document.getElementById('id_prioridad').value;
-
-        console.log('🎯 Validando campos específicos:');
-        console.log(`  nombre: "${nombre}"`);
-        console.log(`  cantidad: "${cantidad}"`);
-        console.log(`  categoria: "${categoria}"`);
-        console.log(`  prioridad: "${prioridad}"`);
 
         // VALIDACIÓN ESPECÍFICA
         let errores = [];
@@ -75,7 +53,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         if (errores.length > 0) {
-            console.log('❌ Errores de validación:', errores);
             Swal.fire({
                 icon: "error",
                 title: "Formulario incompleto",
@@ -86,29 +63,14 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        console.log('✅ Formulario válido, preparando datos...');
-
         const body = new FormData(FormProductos);
-        
-        // MOSTRAR QUÉ DATOS SE ESTÁN ENVIANDO
-        console.log('📤 Datos a enviar:');
-        for (let [key, value] of body.entries()) {
-            console.log(`  ${key}: ${value}`);
-        }
-
         const url = '/app01_mrml/productos/guardarAPI';
-        console.log('🌐 URL:', url);
 
         try {
-            console.log('📡 Enviando petición...');
             const res = await fetch(url, { method: 'POST', body });
-            console.log('📨 Respuesta recibida:', res.status);
-            
             const response = await res.json();
-            console.log('📋 Datos de respuesta:', response);
 
             if (response.codigo == 1) {
-                console.log('✅ Éxito!');
                 await Swal.fire({ 
                     icon: 'success', 
                     title: 'Éxito', 
@@ -117,7 +79,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 limpiarTodo();
                 BuscarProductos();
             } else {
-                console.log('❌ Error del servidor:', response.mensaje);
                 await Swal.fire({ 
                     icon: 'error', 
                     title: 'Error', 
@@ -125,7 +86,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
         } catch (e) {
-            console.error('💥 Error en GuardarProducto:', e);
             await Swal.fire({
                 icon: 'error',
                 title: 'Error de conexión',
@@ -135,38 +95,29 @@ document.addEventListener('DOMContentLoaded', function() {
         BtnGuardar.disabled = false;
     }
 
-    // ✅ FUNCIÓN BUSCAR PRODUCTOS
+    // FUNCIÓN BUSCAR PRODUCTOS
     const BuscarProductos = async () => {
-        console.log('🔍 BuscarProductos ejecutado');
         const url = '/app01_mrml/productos/buscarAPI';
         try {
             const res = await fetch(url);
             const response = await res.json();
 
-            console.log('📋 Productos obtenidos:', response);
-
             if (response.codigo == 1) {
                 const pendientes = response.data.filter(p => p.situacion_comprado == 0);
                 const comprados = response.data.filter(p => p.situacion_comprado == 1);
 
-                console.log(`📊 Pendientes: ${pendientes.length}, Comprados: ${comprados.length}`);
-
                 mostrarProductosHTML(pendientes, comprados);
-
                 Toast.fire({ icon: 'success', title: response.mensaje });
             } else {
-                console.log('❌ Error al buscar:', response.mensaje);
                 Swal.fire({ icon: 'info', title: 'Error', text: response.mensaje });
             }
         } catch (e) {
-            console.error('💥 Error en BuscarProductos:', e);
+            // Error silencioso para mejor UX
         }
     }
 
-    // ✅ FUNCIÓN MOSTRAR PRODUCTOS CON HTML SIMPLE
+    // FUNCIÓN MOSTRAR PRODUCTOS CON HTML SIMPLE
     const mostrarProductosHTML = (pendientes, comprados) => {
-        console.log('📄 Mostrando productos con HTML simple');
-        
         // MOSTRAR PENDIENTES
         const containerPendientes = document.getElementById('TableProductosPendientes');
         if (containerPendientes) {
@@ -306,10 +257,8 @@ document.addEventListener('DOMContentLoaded', function() {
         agregarEventListenersBotones();
     }
 
-    // ✅ FUNCIÓN PARA AGREGAR EVENT LISTENERS A BOTONES DINÁMICOS
+    // FUNCIÓN PARA AGREGAR EVENT LISTENERS A BOTONES DINÁMICOS
     const agregarEventListenersBotones = () => {
-        console.log('🎯 Agregando event listeners a botones dinámicos...');
-        
         // Event listeners para botones de modificar
         document.querySelectorAll('.modificar').forEach(btn => {
             btn.addEventListener('click', llenarFormulario);
@@ -331,9 +280,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // ✅ FUNCIÓN LLENAR FORMULARIO
+    // FUNCIÓN LLENAR FORMULARIO
     const llenarFormulario = (e) => {
-        console.log('✏️ llenarFormulario ejecutado');
         const d = e.currentTarget.dataset;
 
         document.getElementById('id').value = d.id;
@@ -348,17 +296,15 @@ document.addEventListener('DOMContentLoaded', function() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // ✅ FUNCIÓN LIMPIAR TODO
+    // FUNCIÓN LIMPIAR TODO
     const limpiarTodo = () => {
-        console.log('🧽 limpiarTodo ejecutado');
         FormProductos.reset();
         BtnGuardar.classList.remove('d-none');
         BtnModificar.classList.add('d-none');
     }
 
-    // ✅ FUNCIÓN MODIFICAR PRODUCTO
+    // FUNCIÓN MODIFICAR PRODUCTO
     const ModificarProducto = async (event) => {
-        console.log('✏️ ModificarProducto ejecutado');
         event.preventDefault();
         BtnModificar.disabled = true;
 
@@ -420,7 +366,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
         } catch (e) {
-            console.error('💥 Error en ModificarProducto:', e);
             Swal.fire({
                 icon: 'error',
                 title: 'Error de conexión',
@@ -430,9 +375,8 @@ document.addEventListener('DOMContentLoaded', function() {
         BtnModificar.disabled = false;
     }
 
-    // ✅ FUNCIÓN CAMBIAR ESTADO
+    // FUNCIÓN CAMBIAR ESTADO
     const cambiarEstado = async (id, estado) => {
-        console.log(`🔄 cambiarEstado ejecutado: ID=${id}, Estado=${estado}`);
         const body = new FormData();
         body.append('id_producto', id);
         body.append('situacion_comprado', estado);
@@ -443,8 +387,6 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const res = await fetch(url, config);
             const response = await res.json();
-            
-            console.log('🔄 Respuesta cambiar estado:', response);
             
             if (response.codigo == 1) {
                 BuscarProductos();
@@ -460,7 +402,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
         } catch (e) { 
-            console.error('💥 Error en cambiarEstado:', e);
             Swal.fire({
                 icon: 'error',
                 title: 'Error de conexión',
@@ -469,10 +410,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // ✅ FUNCIÓN ELIMINAR PRODUCTO
+    // FUNCIÓN ELIMINAR PRODUCTO
     const eliminarProducto = async (id) => {
-        console.log(`🗑️ eliminarProducto ejecutado: ID=${id}`);
-        
         const confirmacion = await Swal.fire({
             title: '¿Estás segura?',
             text: "¿Deseas eliminar este producto de tu lista?",
@@ -509,7 +448,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                 }
             } catch (e) { 
-                console.error('💥 Error en eliminarProducto:', e);
                 Swal.fire({
                     icon: 'error',
                     title: 'Error de conexión',
@@ -519,25 +457,19 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // ✅ AGREGAR EVENT LISTENERS PRINCIPALES
-    console.log('🎯 Agregando event listeners principales...');
-
+    // AGREGAR EVENT LISTENERS PRINCIPALES
     if (FormProductos) {
         FormProductos.addEventListener('submit', GuardarProducto);
-        console.log('✅ Event listener submit agregado al formulario');
     }
 
     if (BtnLimpiar) {
         BtnLimpiar.addEventListener('click', limpiarTodo);
-        console.log('✅ Event listener click agregado al botón limpiar');
     }
 
     if (BtnModificar) {
         BtnModificar.addEventListener('click', ModificarProducto);
-        console.log('✅ Event listener click agregado al botón modificar');
     }
 
-    // ✅ INICIALIZAR APLICACIÓN
-    console.log('🚀 Inicializando aplicación...');
+    // INICIALIZAR APLICACIÓN
     BuscarProductos();
 });
