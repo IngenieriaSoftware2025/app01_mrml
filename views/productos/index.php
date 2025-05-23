@@ -65,14 +65,14 @@
         </div>
     </div>
 
-    <!-- ✅ SECCIÓN DE TABLAS PARA PRODUCTOS -->
+    <!--  SECCIÓN DE TABLAS PARA PRODUCTOS -->
     <div class="row justify-content-center mt-5">
         <div class="col-lg-11">
             <!-- PRODUCTOS PENDIENTES -->
             <div class="card shadow-lg border-0 rounded-3 mb-4">
                 <div class="card-body">
                     <h4 class="text-center mb-4 text-primary">
-                        <i class="bi bi-list-check"></i> 📋 Productos Pendientes
+                        <i class="bi bi-list-check"></i>  Productos Pendientes
                     </h4>
                     <div id="TableProductosPendientes">
                         <!-- Aquí se cargarán los productos pendientes -->
@@ -89,7 +89,7 @@
             <div class="card shadow-lg border-0 rounded-3">
                 <div class="card-body">
                     <h4 class="text-center mb-4 text-success">
-                        <i class="bi bi-check-circle"></i> ✅ Productos Comprados
+                        <i class="bi bi-check-circle"></i>  Productos Comprados
                     </h4>
                     <div id="TableProductosComprados">
                         <!-- Aquí se cargarán los productos comprados -->

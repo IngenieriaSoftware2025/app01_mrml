@@ -41,7 +41,7 @@
     </div>
     
     <div class="text-center">
-        <a href="/app01_mrml/productosMaria" class="btn btn-comenzar">
+        <a href="/app01_mrml/productos" class="btn btn-comenzar">
             <i class="bi bi-basket me-2"></i>Comenzar a organizar
         </a>
     </div>
